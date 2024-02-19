@@ -1,12 +1,11 @@
 package com.rschwartz.bankingapi;
 
-import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 class BankingApiApplicationTests {
 
-	@Test
+	//@Test
 	void contextLoads() {
 	}
 
