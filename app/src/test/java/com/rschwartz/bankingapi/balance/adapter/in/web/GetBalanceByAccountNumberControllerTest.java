@@ -44,7 +44,7 @@ class GetBalanceByAccountNumberControllerTest {
   }
 
   @Test
-  @DisplayName("Should get optional empty when balance does not exist.")
+  @DisplayName("Should get error when balance does not exist.")
   void balanceNotFound() {
 
     when(useCase.execute(anyString()))

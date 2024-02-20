@@ -1,0 +1,26 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  datasource:
+    url: jdbc:h2:mem:banking
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    properties:
+      hibernate:
+        show-sql: true
+        format-sql: true
+        dialect: org.hibernate.dialect.H2Dialect
+        hbm2ddl.auto: none
+##        hbm2ddl.auto: create-drop
+  h2:
+    console:
+      enabled: true
+      path: /console
+      schema: /sql
+      settings:
+        trace: false
+
+  flyway:
+    enabled: false
