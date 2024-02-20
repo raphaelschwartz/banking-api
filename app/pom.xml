@@ -19,6 +19,7 @@
     <mapstruct.version>1.5.5.Final</mapstruct.version>
     <jacoco.version>0.8.11</jacoco.version>
     <fixture-factory.version>3.1.0</fixture-factory.version>
+    <java-fluent-validator.version>1.10.0</java-fluent-validator.version>
   </properties>
   <dependencies>
     <dependency>
@@ -66,6 +67,12 @@
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>com.github.mvallim</groupId>
+      <artifactId>java-fluent-validator</artifactId>
+      <version>${java-fluent-validator.version}</version>
     </dependency>
 
 		<!-- Test -->
