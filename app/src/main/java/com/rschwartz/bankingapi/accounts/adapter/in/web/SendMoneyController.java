@@ -1,19 +1,17 @@
 package com.rschwartz.bankingapi.accounts.adapter.in.web;
 
-import com.rschwartz.bankingapi.accounts.adapter.in.web.dto.SendMoneyRequest;
+import com.rschwartz.bankingapi.accounts.adapter.in.web.dto.request.SendMoneyRequest;
 import com.rschwartz.bankingapi.accounts.adapter.in.web.exception.SendMoneyRequestValidatorException;
 import com.rschwartz.bankingapi.accounts.adapter.in.web.validator.SendMoneyRequestValidator;
+import com.rschwartz.bankingapi.accounts.aplication.domain.Money;
 import com.rschwartz.bankingapi.accounts.aplication.port.in.useCase.SendMoneyUseCase;
 import com.rschwartz.bankingapi.accounts.aplication.port.in.useCase.dto.SendMoneyInput;
-import com.rschwartz.bankingapi.accounts.domain.AccountNew.AccountId;
-import com.rschwartz.bankingapi.accounts.domain.Money;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.math.BigInteger;
-import java.util.UUID;
+import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -36,11 +34,11 @@ public class SendMoneyController {
   private final SendMoneyRequestValidator validator;
   private final SendMoneyUseCase useCase;
 
-  @Operation(summary = "Get a balance by account id", description = "Returns the account balance")
+  @Operation(summary = "Transfer money.", description = "Transfer money between accounts.")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "204", description = "Found the balance"), // FIXME
-      @ApiResponse(responseCode = "400", description = "Not found - The balance was not found", content = @Content), // FIXME
-      @ApiResponse(responseCode = "500", description =  "Internal server error - Something went wrong", content = @Content)
+      @ApiResponse(responseCode = "204", description = "Tranfer sent."),
+      @ApiResponse(responseCode = "400", description = "Bad Request - The balance was not found.", content = @Content),
+      @ApiResponse(responseCode = "500", description =  "Internal server error - Something went wrong.", content = @Content)
   })
   @PostMapping
   @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -49,13 +47,11 @@ public class SendMoneyController {
     validator.validate(request)
             .isInvalidThrow(SendMoneyRequestValidatorException.class);
 
-    // FIXME add mapper
+    // TODO Validate whether it should be included in mapper
     useCase.execute(new SendMoneyInput(
-        new AccountId(UUID.randomUUID()),
-        new AccountId(UUID.randomUUID()),
-        //new AccountId(Long.valueOf(request.getSourceAccountId())),
-        //new AccountId(Long.valueOf(request.getSourceAccountId())),
-        new Money(new BigInteger(request.getAmount()))
+        request.getSourceAccountId(),
+        request.getTargetAccountId(),
+        new Money(new BigDecimal(request.getAmount()))
     ));
   }
 

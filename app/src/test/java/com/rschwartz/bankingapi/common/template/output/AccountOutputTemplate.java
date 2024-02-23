@@ -20,8 +20,10 @@ public class AccountOutputTemplate implements TemplateLoader {
 
     Fixture.of(AccountOutput.class).addTemplate(VALID, new Rule() {
       {
-        add("accountNumber", "0123456");
-        add("value", new BigDecimal("10.80"));
+        // FIXME add fields
+        add("id", 1L);
+        add("number", "0123456");
+        add("balance", new BigDecimal("10.80"));
         add("limit", new BigDecimal("100.80"));
         add("updateDate", LocalDateTime.now().minusMinutes(30));
       }

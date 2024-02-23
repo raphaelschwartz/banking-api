@@ -4,16 +4,23 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import br.com.six2six.fixturefactory.Fixture;
+import br.com.six2six.fixturefactory.loader.FixtureFactoryLoader;
+import com.rschwartz.bankingapi.accounts.aplication.domain.Account;
 import com.rschwartz.bankingapi.accounts.aplication.port.out.LoadAccountPort;
 import com.rschwartz.bankingapi.accounts.aplication.port.out.dto.AccountOutput;
+import com.rschwartz.bankingapi.accounts.aplication.port.out.mapper.AccountOutputMapper;
 import com.rschwartz.bankingapi.accounts.aplication.service.LoadAccountService;
-import com.rschwartz.bankingapi.accounts.domain.Account;
+import com.rschwartz.bankingapi.common.template.BaseFixture;
 import com.rschwartz.bankingapi.common.template.domain.AccountTemplate;
+import com.rschwartz.bankingapi.common.template.output.AccountOutputTemplate;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -26,7 +33,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class LoadAccountServiceTest {
 
-  private static final String ACCOUNT_NUMBER = "012345";
+  private static final Long ACCOUNT_ID = 12345L;
 
   @InjectMocks
   private LoadAccountService service;
@@ -34,19 +41,22 @@ class LoadAccountServiceTest {
   @Mock
   private LoadAccountPort port;
 
+  @Mock
+  private AccountOutputMapper mapper;
+
   @BeforeAll
   static void setUp() {
-    // FIXME
+    FixtureFactoryLoader.loadTemplates(BaseFixture.OUTPUT.getPath());
   }
 
   @Test
-  @DisplayName("Should get optional empty when balance does not exist.")
-  void balanceNotFound() {
+  @DisplayName("Should get optional empty when account does not exist.")
+  void accountNotFound() {
 
-    when(port.execute(anyString()))
+    when(port.findById(anyLong()))
         .thenReturn(Optional.empty());
 
-    final Optional<AccountOutput> result = service.execute(ACCOUNT_NUMBER);
+    final Optional<AccountOutput> result = service.execute(ACCOUNT_ID);
 
     assertAll(() -> {
       assertNotNull(result);
@@ -54,19 +64,26 @@ class LoadAccountServiceTest {
     });
 
     verify(port, times(1))
-        .execute(anyString());
+        .findById(anyLong());
+
+    verify(mapper, never())
+        .mapDomainToOutput(any(Account.class));
   }
 
   @Test
-  @DisplayName("Should get balance by account number.")
-  void balanceExists() {
+  @DisplayName("Should get account by id.")
+  void accountExists() {
 
-    final Account balance = AccountTemplate.getValidTemplate();
+    final Account account = AccountTemplate.getValidTemplate();
+    when(port.findById(anyLong()))
+        .thenReturn(Optional.of(account));
 
-    when(port.execute(anyString()))
-        .thenReturn(Optional.of(balance));
+    final AccountOutput output = Fixture.from(AccountOutput.class)
+        .gimme(AccountOutputTemplate.VALID);
+    when(mapper.mapDomainToOutput(any(Account.class)))
+        .thenReturn(output);
 
-    final Optional<AccountOutput> result = service.execute(ACCOUNT_NUMBER);
+    final Optional<AccountOutput> result = service.execute(ACCOUNT_ID);
 
     assertAll(() -> {
       assertNotNull(result);
@@ -74,7 +91,10 @@ class LoadAccountServiceTest {
     });
 
     verify(port, times(1))
-        .execute(anyString());
+        .findById(anyLong());
+
+    verify(mapper, times(1))
+        .mapDomainToOutput(any(Account.class));
   }
 
 }

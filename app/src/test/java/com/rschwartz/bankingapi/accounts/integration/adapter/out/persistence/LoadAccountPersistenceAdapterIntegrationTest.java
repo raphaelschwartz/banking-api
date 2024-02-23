@@ -6,8 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.rschwartz.bankingapi.BankingApiApplication;
 import com.rschwartz.bankingapi.accounts.adapter.out.persistence.LoadAccountPersistenceAdapter;
-import com.rschwartz.bankingapi.accounts.adapter.out.repository.AccountRepository;
-import com.rschwartz.bankingapi.accounts.domain.Account;
+import com.rschwartz.bankingapi.accounts.adapter.out.persistence.repository.AccountRepository;
+import com.rschwartz.bankingapi.accounts.aplication.domain.Account;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,10 +31,10 @@ public class LoadAccountPersistenceAdapterIntegrationTest {
   private AccountRepository repository;
 
   @Test
-  @DisplayName("Should get optional empty when balance does not exist.")
-  void balanceNotFound() {
+  @DisplayName("Should get optional empty when account does not exist.")
+  void accountNotFound() {
 
-    final Optional<Account> result = adapter.execute("1");
+    final Optional<Account> result = adapter.findById(999L);
 
     assertAll(() -> {
       assertNotNull(result);
@@ -44,10 +44,10 @@ public class LoadAccountPersistenceAdapterIntegrationTest {
   }
 
   @Test
-  @DisplayName("Should get balance by account number.")
-  void balanceExists() {
+  @DisplayName("Should get account by id.")
+  void accountExists() {
 
-    final Optional<Account> result = adapter.execute("0123456789");
+    final Optional<Account> result = adapter.findById(123L);
 
     assertAll(() -> {
       assertNotNull(result);

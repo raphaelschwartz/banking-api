@@ -2,7 +2,6 @@ package com.rschwartz.bankingapi.accounts.aplication.port.out.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,10 +13,10 @@ import lombok.ToString;
 @NoArgsConstructor
 public class AccountOutput {
 
-  private UUID externalId;
-  private UUID ownerId;
-  private String accountNumber;
-  private BigDecimal value;
+  private Long id;
+  private Long ownerId;
+  private String number;
+  private BigDecimal balance;
   private BigDecimal limit;
   private LocalDateTime updateDate;
 

@@ -3,7 +3,7 @@ package com.rschwartz.bankingapi.common.template.entity;
 import br.com.six2six.fixturefactory.Fixture;
 import br.com.six2six.fixturefactory.Rule;
 import br.com.six2six.fixturefactory.loader.TemplateLoader;
-import com.rschwartz.bankingapi.accounts.adapter.out.entity.AccountJpaEntity;
+import com.rschwartz.bankingapi.accounts.adapter.out.persistence.entity.AccountJpaEntity;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 

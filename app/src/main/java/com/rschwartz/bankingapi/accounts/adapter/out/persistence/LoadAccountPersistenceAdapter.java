@@ -1,9 +1,9 @@
 package com.rschwartz.bankingapi.accounts.adapter.out.persistence;
 
-import com.rschwartz.bankingapi.accounts.adapter.out.entity.AccountJpaEntity;
-import com.rschwartz.bankingapi.accounts.adapter.out.repository.AccountRepository;
+import com.rschwartz.bankingapi.accounts.adapter.out.persistence.mapper.AccountMapper;
+import com.rschwartz.bankingapi.accounts.adapter.out.persistence.repository.AccountRepository;
+import com.rschwartz.bankingapi.accounts.aplication.domain.Account;
 import com.rschwartz.bankingapi.accounts.aplication.port.out.LoadAccountPort;
-import com.rschwartz.bankingapi.accounts.domain.Account;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,28 +15,17 @@ import org.springframework.stereotype.Component;
 public class LoadAccountPersistenceAdapter implements LoadAccountPort {
 
   private final AccountRepository repository;
+  private final AccountMapper mapper;
 
   @Override
-  public Optional<Account> execute(final String accountNumber) {
+  public Optional<Account> findById(final Long id) {
 
-    log.info("Loading account: account_number={}", accountNumber);
+    log.info("Loading account: account_id={}", id);
 
     // TODO Loading from caching
 
-    return repository.findByNumber(accountNumber)
-        .map(this::convert);
-  }
-
-  private Account convert(final AccountJpaEntity entity) {
-
-    return Account.restore(
-        entity.getId(),
-        entity.getExternalId(),
-        entity.getOwnerId(),
-        entity.getNumber(),
-        entity.getBalance(),
-        entity.getAvailableLimit(),
-        entity.getUpdateDate());
+    return repository.findByIdAndActiveTrue(id)
+        .map(mapper::mapEntityToDomain);
   }
 
 }

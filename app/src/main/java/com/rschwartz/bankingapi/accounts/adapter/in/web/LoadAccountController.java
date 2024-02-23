@@ -1,8 +1,8 @@
 package com.rschwartz.bankingapi.accounts.adapter.in.web;
 
-import com.rschwartz.bankingapi.accounts.adapter.out.dto.AccountResponse;
+import com.rschwartz.bankingapi.accounts.adapter.in.web.dto.response.AccountResponse;
+import com.rschwartz.bankingapi.accounts.adapter.in.web.mapper.AccountResponseMapper;
 import com.rschwartz.bankingapi.accounts.aplication.port.in.useCase.LoadAccountUseCase;
-import com.rschwartz.bankingapi.accounts.aplication.port.out.dto.AccountOutput;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -27,35 +27,25 @@ import org.springframework.web.bind.annotation.RestController;
 public class LoadAccountController {
 
   private final LoadAccountUseCase useCase;
+  private final AccountResponseMapper mapper;
 
-  @Operation(summary = "Get a balance by account id", description = "Returns the account balance")
+  @Operation(summary = "Get account by account id.", description = "Returns the account.")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Found the balance"),
-      @ApiResponse(responseCode = "404", description = "Not found - The balance was not found", content = @Content),
-      @ApiResponse(responseCode = "500", description =  "Internal server error - Something went wrong", content = @Content)
+      @ApiResponse(responseCode = "200", description = "Found the account."),
+      @ApiResponse(responseCode = "404", description = "Not found - The account was not found.", content = @Content),
+      @ApiResponse(responseCode = "500", description =  "Internal server error - Something went wrong.", content = @Content)
   })
   @GetMapping("/{id}")
-  public ResponseEntity<AccountResponse> findByAccountNumber(
-      @Parameter(description = "Account Number", example = "0123456")
-      @PathVariable("id") final String accountNumber
+  public ResponseEntity<AccountResponse> findById(
+      @Parameter(description = "Account id", example = "12345")
+      @PathVariable final Long id
   ) {
 
     return useCase
-        .execute(accountNumber)
-        .map(this::convert)
+        .execute(id)
+        .map(mapper::mapOutputToResponse)
         .map(ResponseEntity::ok)
         .orElse(ResponseEntity.notFound().build());
-  }
-
-  private AccountResponse convert(final AccountOutput output) {
-
-    return new AccountResponse(
-        output.getExternalId(),
-        output.getOwnerId(),
-        output.getAccountNumber(),
-        output.getValue(),
-        output.getLimit(),
-        output.getUpdateDate());
   }
 
 }

@@ -1,7 +1,6 @@
 package com.rschwartz.bankingapi.accounts.aplication.port.in.useCase.dto;
 
-import com.rschwartz.bankingapi.accounts.domain.AccountNew.AccountId;
-import com.rschwartz.bankingapi.accounts.domain.Money;
+import com.rschwartz.bankingapi.accounts.aplication.domain.Money;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,9 +12,9 @@ import lombok.ToString;
 @NoArgsConstructor
 public class SendMoneyInput {
 
-  private AccountId sourceAccountId;
+  private Long sourceAccountId;
 
-  private AccountId targetAccountId;
+  private Long targetAccountId;
 
   private Money money;
 

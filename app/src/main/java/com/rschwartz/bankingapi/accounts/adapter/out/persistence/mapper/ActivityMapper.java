@@ -1,13 +1,13 @@
 package com.rschwartz.bankingapi.accounts.adapter.out.persistence.mapper;
 
-import com.rschwartz.bankingapi.accounts.adapter.out.entity.ActivityJpaEntity;
-import com.rschwartz.bankingapi.accounts.domain.Activity;
+import com.rschwartz.bankingapi.accounts.adapter.out.persistence.entity.TransactionJpaEntity;
+import com.rschwartz.bankingapi.accounts.aplication.domain.Transaction;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ActivityMapper {
 
-  public ActivityJpaEntity mapToJpaEntity(final Activity activity) {
+  public TransactionJpaEntity mapToJpaEntity(final Transaction activity) {
 
     return null;
     /*return new ActivityJpaEntity(

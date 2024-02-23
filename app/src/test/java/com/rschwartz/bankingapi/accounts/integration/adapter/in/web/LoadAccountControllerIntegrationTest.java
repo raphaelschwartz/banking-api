@@ -1,6 +1,7 @@
 package com.rschwartz.bankingapi.accounts.integration.adapter.in.web;
 
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -8,11 +9,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import br.com.six2six.fixturefactory.Fixture;
 import br.com.six2six.fixturefactory.loader.FixtureFactoryLoader;
 import com.rschwartz.bankingapi.accounts.adapter.in.web.LoadAccountController;
+import com.rschwartz.bankingapi.accounts.adapter.in.web.dto.response.AccountResponse;
+import com.rschwartz.bankingapi.accounts.adapter.in.web.mapper.AccountResponseMapper;
 import com.rschwartz.bankingapi.accounts.aplication.port.in.useCase.LoadAccountUseCase;
 import com.rschwartz.bankingapi.accounts.aplication.port.out.dto.AccountOutput;
 import com.rschwartz.bankingapi.common.adapter.in.web.integration.GetMappingControllerTest;
 import com.rschwartz.bankingapi.common.template.BaseFixture;
 import com.rschwartz.bankingapi.common.template.output.AccountOutputTemplate;
+import com.rschwartz.bankingapi.common.template.response.AccountResponseTemplate;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -26,6 +30,7 @@ import org.springframework.test.web.servlet.MockMvc;
 public class LoadAccountControllerIntegrationTest extends GetMappingControllerTest {
 
   private static final String BASE_URI = "/v1/accounts";
+  private static final Long ACCOUNT_ID = 12345L;
 
   @Autowired
   private MockMvc mockMvc;
@@ -33,18 +38,22 @@ public class LoadAccountControllerIntegrationTest extends GetMappingControllerTe
   @MockBean
   private LoadAccountUseCase useCase;
 
+  @MockBean
+  private AccountResponseMapper mapper;
+
   @BeforeAll
   static void setUp() {
     FixtureFactoryLoader.loadTemplates(BaseFixture.OUTPUT.getPath());
+    FixtureFactoryLoader.loadTemplates(BaseFixture.RESPONSE.getPath());
   }
 
   @Test
-  @DisplayName("Should get error when balance does not exist.")
+  @DisplayName("Should get error when account does not exist.")
   void balanceNotFound() throws Exception {
 
-    final String uri = String.format("%s/%s", BASE_URI, 1L);
+    final String uri = String.format("%s/%s", BASE_URI, ACCOUNT_ID);
 
-    when(useCase.execute(anyString()))
+    when(useCase.execute(anyLong()))
         .thenReturn(Optional.empty());
 
     mockMvc
@@ -54,17 +63,20 @@ public class LoadAccountControllerIntegrationTest extends GetMappingControllerTe
   }
 
   @Test
-  @DisplayName("Should get balance by account number.")
+  @DisplayName("Should get account by id.")
   void balanceExists() throws Exception {
 
-    final String accountNumber = "0123456789";
-    final String uri = String.format("%s/%s", BASE_URI, accountNumber);
+    final String uri = String.format("%s/%s", BASE_URI, ACCOUNT_ID);
 
     final AccountOutput output = Fixture.from(AccountOutput.class)
         .gimme(AccountOutputTemplate.VALID);
-
-    when(useCase.execute(anyString()))
+    when(useCase.execute(anyLong()))
         .thenReturn(Optional.of(output));
+
+    final AccountResponse response = Fixture.from(AccountResponse.class)
+        .gimme(AccountResponseTemplate.VALID);
+    when(mapper.mapOutputToResponse(any(AccountOutput.class)))
+        .thenReturn(response);
 
     mockMvc
         .perform(get(uri))

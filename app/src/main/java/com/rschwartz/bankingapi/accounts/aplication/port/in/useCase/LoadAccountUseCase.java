@@ -5,6 +5,6 @@ import java.util.Optional;
 
 public interface LoadAccountUseCase {
 
-  Optional<AccountOutput> execute(String accountNumber);
+  Optional<AccountOutput> execute(Long id);
 
 }

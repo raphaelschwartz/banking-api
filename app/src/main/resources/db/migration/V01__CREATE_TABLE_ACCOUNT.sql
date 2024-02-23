@@ -1,6 +1,5 @@
 CREATE TABLE account (
 	id BIGINT(20) AUTO_INCREMENT,
-	external_id VARBINARY(36) DEFAULT (UUID()),
 	number VARCHAR(50) NOT NULL,
   status VARCHAR(20) NOT NULL,
   owner_id VARBINARY(36) NOT NULL,

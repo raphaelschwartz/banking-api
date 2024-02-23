@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import com.rschwartz.bankingapi.accounts.adapter.out.dto.AccountResponse;
+import com.rschwartz.bankingapi.accounts.adapter.in.web.dto.response.AccountResponse;
 import com.rschwartz.bankingapi.common.adapter.in.handler.ApiError;
 import com.rschwartz.bankingapi.common.adapter.in.web.component.ComponentController;
 import java.util.List;
@@ -26,7 +26,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
-@Sql({"/data/component/account/LoadAccountByNumber.sql"})
+@Sql({"/data/component/account/LoadAccount.sql"})
 public class LoadAccountControllerComponentTest extends ComponentController {
 
   private static final String BASE_URI = "/v1/accounts";
@@ -35,10 +35,11 @@ public class LoadAccountControllerComponentTest extends ComponentController {
   private TestRestTemplate restTemplate;
 
   @Test
-  @DisplayName("Should get error when balance does not exist.")
-  void balanceNotFound() {
+  @DisplayName("Should get error when account does not exist.")
+  void accountNotFound() {
 
-    final String uri = String.format("%s/%s", BASE_URI, 10L);
+    final Long accountId = 99L;
+    final String uri = String.format("%s/%s", BASE_URI, accountId);
 
     final ParameterizedTypeReference<List<ApiError>> responseType = new ParameterizedTypeReference<>() {
     };
@@ -58,11 +59,11 @@ public class LoadAccountControllerComponentTest extends ComponentController {
   }
 
   @Test
-  @DisplayName("Should get balance by account number.")
-  void balanceExists() {
+  @DisplayName("Should get account by id.")
+  void accountExists() {
 
-    final String accountNumber = "0123456789";
-    final String uri = String.format("%s/%s", BASE_URI, accountNumber);
+    final Long accountId = 123L;
+    final String uri = String.format("%s/%s", BASE_URI, accountId);
 
     final ResponseEntity<AccountResponse> result = restTemplate
         .exchange(uri, HttpMethod.GET, new HttpEntity<>(getHttpHeaders()), AccountResponse.class);
@@ -72,7 +73,7 @@ public class LoadAccountControllerComponentTest extends ComponentController {
 
       final AccountResponse response = result.getBody();
       assert response != null; // FIXME
-      assertEquals(accountNumber, response.getNumber());
+      assertEquals(accountId, response.getId());
       assertNotNull(response.getNumber());
       assertNotNull(response.getBalance());
       assertNotNull(response.getLimit());

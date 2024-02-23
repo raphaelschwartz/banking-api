@@ -1,14 +1,18 @@
 package com.rschwartz.bankingapi.accounts.aplication.service;
 
+import com.rschwartz.bankingapi.accounts.aplication.domain.Account;
+import com.rschwartz.bankingapi.accounts.aplication.domain.Person;
+import com.rschwartz.bankingapi.accounts.aplication.domain.Transaction;
 import com.rschwartz.bankingapi.accounts.aplication.port.in.useCase.SendMoneyUseCase;
 import com.rschwartz.bankingapi.accounts.aplication.port.in.useCase.dto.SendMoneyInput;
-import com.rschwartz.bankingapi.accounts.aplication.port.out.AccountLock;
-import com.rschwartz.bankingapi.accounts.aplication.port.out.LoadAccountPortError;
-import com.rschwartz.bankingapi.accounts.aplication.port.out.UpdateAccountStatePort;
-import com.rschwartz.bankingapi.accounts.domain.AccountNew;
-import com.rschwartz.bankingapi.accounts.domain.AccountNew.AccountId;
+import com.rschwartz.bankingapi.accounts.aplication.port.out.LoadAccountPort;
+import com.rschwartz.bankingapi.accounts.aplication.port.out.LoadPersonPort;
+import com.rschwartz.bankingapi.accounts.aplication.port.out.NotificationBacenPort;
+import com.rschwartz.bankingapi.accounts.aplication.port.out.RegisterTransactionPort;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,60 +21,58 @@ import org.springframework.stereotype.Service;
 @Transactional
 public class SendMoneyService implements SendMoneyUseCase {
 
-  private final LoadAccountPortError loadAccountPort;
-  private final AccountLock accountLock;
-  private final UpdateAccountStatePort updateAccountStatePort;
+
+  private final LoadAccountPort loadAccountPort;
+  private final LoadPersonPort loadPersonPort;
+  private final RegisterTransactionPort registerTransactionPort;
+  private final NotificationBacenPort notificationBacenPort;
 
   @Override
-  public boolean execute(final SendMoneyInput input) {
+  public void execute(final SendMoneyInput input) {
 
-    checkThreshold(input);
+    final Account accountSource = getAccount(input.getSourceAccountId());
+    final Account accountTarget = getAccount(input.getSourceAccountId());
+    final Person person = getPerson(accountTarget.getOwnerId());
 
-    final LocalDateTime baselineDate = LocalDateTime.now().minusDays(10);
+    final List<Transaction> transactions = Transaction.transferBetweenAccounts(accountSource,
+        input.getMoney(), accountTarget, getDailyTransactions(accountSource));
 
-    final AccountNew sourceAccount = loadAccountPort.execute(
-        input.getSourceAccountId(),
-        baselineDate);
+    save(transactions);
+    sendNotificationToBacen(transactions, person);
 
-    final AccountNew targetAccount = loadAccountPort.execute(
-        input.getTargetAccountId(),
-        baselineDate);
-
-    final AccountId sourceAccountId = sourceAccount.getId()
-        .orElseThrow(() -> new IllegalStateException("expected source account ID not to be empty"));
-    final AccountId targetAccountId = targetAccount.getId()
-        .orElseThrow(() -> new IllegalStateException("expected target account ID not to be empty"));
-
-    accountLock.lockAccount(sourceAccountId);
-    if (!sourceAccount.withdraw(input.getMoney(), targetAccountId)) {
-      accountLock.releaseAccount(sourceAccountId);
-      return false;
-    }
-
-    accountLock.lockAccount(targetAccountId);
-    if (!targetAccount.deposit(input.getMoney(), sourceAccountId)) {
-      accountLock.releaseAccount(sourceAccountId);
-      accountLock.releaseAccount(targetAccountId);
-      return false;
-    }
-
-    updateAccountStatePort.execute(sourceAccount);
-    updateAccountStatePort.execute(targetAccount);
-
-    accountLock.releaseAccount(sourceAccountId);
-    accountLock.releaseAccount(targetAccountId);
-
-    // send notification Bacen
-    return true;
+    accountSource.updateBalance();
+    accountTarget.updateBalance();
   }
 
-  private void checkThreshold(final SendMoneyInput command) {
+  private Account getAccount(final Long id) {
 
-    /*if (command.money().isGreaterThan(moneyTransferProperties.getMaximumTransferThreshold())){
-      throw new ThresholdExceededException(moneyTransferProperties.getMaximumTransferThreshold(), command.money());
-    }
-     */
+    return loadAccountPort.findById(id)
+        .orElseThrow(() -> new EntityNotFoundException(String.format("%s %s not found", "Account", id)));
+  }
 
+  private Person getPerson(final Long ownerId) {
+    return loadPersonPort.findById(ownerId);
+  }
+
+  private BigDecimal getDailyTransactions(final Account accountSource) {
+    // TODO must add find activities
+    return new BigDecimal(100);
+  }
+
+  private void save(final List<Transaction> transactions) {
+
+    transactions.stream()
+        .forEach(registerTransactionPort::save);
+
+  }
+  private void sendNotificationToBacen(final List<Transaction> transactions, final Person person) {
+
+    final Transaction transaction = transactions.stream()
+        .filter(iten -> "TRANSFER_SENT".equals(iten.getType()))
+        .findAny()
+        .get();
+
+    notificationBacenPort.send(transaction, person);
   }
 
 }

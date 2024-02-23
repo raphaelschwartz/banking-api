@@ -1,6 +1,6 @@
 package com.rschwartz.bankingapi.accounts.adapter.out.persistence;
 
-import com.rschwartz.bankingapi.accounts.adapter.out.repository.AccountRepository;
+import com.rschwartz.bankingapi.accounts.adapter.out.persistence.repository.AccountRepository;
 import com.rschwartz.bankingapi.accounts.aplication.port.out.SendMoneyPort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

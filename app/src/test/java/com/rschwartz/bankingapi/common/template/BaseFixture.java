@@ -5,10 +5,10 @@ import lombok.Getter;
 @Getter
 public enum BaseFixture {
 
-  DOMAIN("com.rschwartz.bankingapi.common.template.domain"),
   ENTITY("com.rschwartz.bankingapi.common.template.entity"),
   OUTPUT("com.rschwartz.bankingapi.common.template.output"),
   REQUEST("com.rschwartz.bankingapi.common.template.request"),
+  RESPONSE("com.rschwartz.bankingapi.common.template.response"),
   FLUENT_VALIDATOR("com.rschwartz.bankingapi.common.template.fluentvalidator");
 
   private final String path;

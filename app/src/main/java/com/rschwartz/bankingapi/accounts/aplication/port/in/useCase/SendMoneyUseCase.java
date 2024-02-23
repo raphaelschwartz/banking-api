@@ -4,6 +4,6 @@ import com.rschwartz.bankingapi.accounts.aplication.port.in.useCase.dto.SendMone
 
 public interface SendMoneyUseCase {
 
-  boolean execute(SendMoneyInput input);
+  void execute(SendMoneyInput input);
 
 }
