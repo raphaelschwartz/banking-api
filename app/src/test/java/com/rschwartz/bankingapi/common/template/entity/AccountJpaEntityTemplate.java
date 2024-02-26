@@ -22,13 +22,15 @@ public class AccountJpaEntityTemplate implements TemplateLoader {
       {
         add("id", 1L);
         add("number", "0123456");
+        add("status", "ACTIVE");
+        add("ownerId", 1234L);
         add("balance", new BigDecimal("10.80"));
-        add("availableLimit", new BigDecimal("100.80"));
         add("updateDate", LocalDateTime.now().minusMinutes(30));
+        add("active", Boolean.TRUE);
       }
+
     });
 
   }
 
 }
-

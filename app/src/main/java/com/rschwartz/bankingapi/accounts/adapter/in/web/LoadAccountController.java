@@ -2,7 +2,7 @@ package com.rschwartz.bankingapi.accounts.adapter.in.web;
 
 import com.rschwartz.bankingapi.accounts.adapter.in.web.dto.response.AccountResponse;
 import com.rschwartz.bankingapi.accounts.adapter.in.web.mapper.AccountResponseMapper;
-import com.rschwartz.bankingapi.accounts.aplication.port.in.useCase.LoadAccountUseCase;
+import com.rschwartz.bankingapi.accounts.application.port.in.useCase.LoadAccountUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

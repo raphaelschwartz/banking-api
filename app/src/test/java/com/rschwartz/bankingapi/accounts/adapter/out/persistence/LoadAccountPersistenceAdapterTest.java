@@ -16,7 +16,7 @@ import br.com.six2six.fixturefactory.loader.FixtureFactoryLoader;
 import com.rschwartz.bankingapi.accounts.adapter.out.persistence.entity.AccountJpaEntity;
 import com.rschwartz.bankingapi.accounts.adapter.out.persistence.mapper.AccountMapper;
 import com.rschwartz.bankingapi.accounts.adapter.out.persistence.repository.AccountRepository;
-import com.rschwartz.bankingapi.accounts.aplication.domain.Account;
+import com.rschwartz.bankingapi.accounts.application.domain.model.Account;
 import com.rschwartz.bankingapi.common.template.BaseFixture;
 import com.rschwartz.bankingapi.common.template.domain.AccountTemplate;
 import com.rschwartz.bankingapi.common.template.entity.AccountJpaEntityTemplate;
@@ -66,7 +66,7 @@ class LoadAccountPersistenceAdapterTest {
         .findByIdAndActiveTrue(anyLong());
 
     verify(mapper, never())
-        .mapEntityToDomain(any(AccountJpaEntity.class));
+        .mapJpaEntityToDomain(any(AccountJpaEntity.class));
   }
 
   @Test
@@ -78,8 +78,8 @@ class LoadAccountPersistenceAdapterTest {
     when(repository.findByIdAndActiveTrue(anyLong()))
         .thenReturn(Optional.of(entity));
 
-    final Account account = AccountTemplate.getValidTemplate();
-    when(mapper.mapEntityToDomain(any(AccountJpaEntity.class)))
+    final Account account = AccountTemplate.getTemplateOne();
+    when(mapper.mapJpaEntityToDomain(any(AccountJpaEntity.class)))
         .thenReturn(account);
 
     final Optional<Account> result = adapter.findById(ACCOUNT_ID);
@@ -93,7 +93,7 @@ class LoadAccountPersistenceAdapterTest {
         .findByIdAndActiveTrue(anyLong());
 
     verify(mapper, times(1))
-        .mapEntityToDomain(any(AccountJpaEntity.class));
+        .mapJpaEntityToDomain(any(AccountJpaEntity.class));
   }
 
 }

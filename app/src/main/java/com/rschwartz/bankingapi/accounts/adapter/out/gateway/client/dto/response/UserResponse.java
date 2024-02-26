@@ -2,14 +2,16 @@ package com.rschwartz.bankingapi.accounts.adapter.out.gateway.client.dto.respons
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Getter
 @ToString
 @AllArgsConstructor
+@NoArgsConstructor
 public class UserResponse {
 
-  private final Long id;
-  private final String fullName;
+  private Long id;
+  private String fullName;
 
 }

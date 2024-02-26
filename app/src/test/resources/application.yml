@@ -24,3 +24,9 @@ spring:
 
   flyway:
     enabled: false
+
+external:
+  users-api:
+    url: http://localhost:1030
+  bacen-api:
+    url: http://localhost:1031
