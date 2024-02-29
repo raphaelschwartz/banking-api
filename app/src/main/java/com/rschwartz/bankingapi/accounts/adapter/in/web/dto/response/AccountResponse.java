@@ -27,9 +27,6 @@ public class AccountResponse {
   @Schema(description = "Balance", example = "10.99")
   private BigDecimal balance;
 
-  @Schema(description = "Available limit", example = "1500")
-  private BigDecimal limit;
-
   @Schema(description = "Update date", example = "0123456789")
   private LocalDateTime updateDate;
 

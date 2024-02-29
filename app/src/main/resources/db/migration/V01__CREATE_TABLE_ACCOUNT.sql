@@ -4,7 +4,6 @@ CREATE TABLE account (
   status VARCHAR(20) NOT NULL,
   owner_id VARBINARY(36) NOT NULL,
   balance DECIMAL(19,2) NOT NULL,
-  available_limit DECIMAL(19,2) NOT NULL,
   update_date DATETIME DEFAULT NULL,
   active BIT(1) NOT NULL,
 	PRIMARY KEY (id)

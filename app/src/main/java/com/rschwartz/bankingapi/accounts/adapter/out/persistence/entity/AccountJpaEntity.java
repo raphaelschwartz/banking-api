@@ -28,8 +28,6 @@ public class AccountJpaEntity {
 
   private BigDecimal balance;
 
-  private BigDecimal availableLimit;
-
   private LocalDateTime updateDate;
 
   private Boolean active;

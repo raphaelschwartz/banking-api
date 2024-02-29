@@ -70,13 +70,13 @@ public class LoadAccountControllerComponentTest extends ComponentController {
 
     assertAll(() -> {
       assertEquals(result.getStatusCode(), HttpStatus.OK);
+      assertNotNull(result.getBody());
 
       final AccountResponse response = result.getBody();
-      assert response != null; // FIXME
       assertEquals(accountId, response.getId());
+      assertNotNull(response.getOwnerId());
       assertNotNull(response.getNumber());
       assertNotNull(response.getBalance());
-      assertNotNull(response.getLimit());
       assertNotNull(response.getUpdateDate());
     });
 

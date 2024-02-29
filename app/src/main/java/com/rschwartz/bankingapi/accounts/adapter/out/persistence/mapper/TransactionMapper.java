@@ -1,39 +1,47 @@
 package com.rschwartz.bankingapi.accounts.adapter.out.persistence.mapper;
 
 import com.rschwartz.bankingapi.accounts.adapter.out.persistence.entity.TransactionJpaEntity;
-import com.rschwartz.bankingapi.accounts.aplication.domain.Money;
-import com.rschwartz.bankingapi.accounts.aplication.domain.Transaction;
-import java.util.UUID;
+import com.rschwartz.bankingapi.accounts.application.domain.model.AccountBalance;
+import com.rschwartz.bankingapi.accounts.application.domain.model.AccountId;
+import com.rschwartz.bankingapi.accounts.application.domain.model.AuditDate;
+import com.rschwartz.bankingapi.accounts.application.domain.model.EntityId;
+import com.rschwartz.bankingapi.accounts.application.domain.model.Money;
+import com.rschwartz.bankingapi.accounts.application.domain.model.Transaction;
+import com.rschwartz.bankingapi.accounts.application.domain.model.TransactionDetail;
+import com.rschwartz.bankingapi.accounts.application.domain.model.TransactionKey;
+import com.rschwartz.bankingapi.accounts.application.domain.model.TransactionType;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TransactionMapper {
 
-  public TransactionJpaEntity mapToJpaEntity(final Transaction transaction) {
+  public TransactionJpaEntity mapDomainToJpaEntity(final Transaction transaction) {
 
     return new TransactionJpaEntity(
-        transaction.getId(),
-        transaction.getType(),
-        transaction.getDetail(),
-        transaction.getCreateDate(),
-        transaction.getAmount().getAmount(),
-        transaction.getAccountId(),
-        transaction.getBalanceAfter().getAmount(),
-        UUID.randomUUID()
+        null,
+        transaction.getType().toString(),
+        transaction.getDetail().getValue(),
+        transaction.getCreateDate().getValue(),
+        transaction.getAmount().getValue(),
+        transaction.getAccountId().getValue(),
+        transaction.getBalanceAfter().getValue(),
+        transaction.getKey().getValue()
     );
   }
 
   public Transaction mapJpaEntityToDomain(final TransactionJpaEntity entity) {
 
+    TransactionType.valueOf(entity.getType());
+
     return Transaction.restore(
-        entity.getId(),
-        entity.getType(),
-        entity.getDetail(),
-        entity.getCreateDate(),
+        new EntityId(entity.getId()),
+        TransactionType.valueOf(entity.getType()),
+        new TransactionDetail(entity.getDetail()),
+        new AuditDate(entity.getCreateDate()),
         new Money(entity.getAmount()),
-        entity.getAccountId(),
-        new Money(entity.getBalanceAfter()),
-        entity.getTransferKey()
+        new AccountId(entity.getAccountId()),
+        new AccountBalance(Money.ofDecimal(entity.getBalanceAfter())),
+        new TransactionKey(entity.getKey())
     );
   }
 

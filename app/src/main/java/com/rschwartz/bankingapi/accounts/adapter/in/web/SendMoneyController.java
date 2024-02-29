@@ -3,9 +3,9 @@ package com.rschwartz.bankingapi.accounts.adapter.in.web;
 import com.rschwartz.bankingapi.accounts.adapter.in.web.dto.request.SendMoneyRequest;
 import com.rschwartz.bankingapi.accounts.adapter.in.web.exception.SendMoneyRequestValidatorException;
 import com.rschwartz.bankingapi.accounts.adapter.in.web.validator.SendMoneyRequestValidator;
-import com.rschwartz.bankingapi.accounts.aplication.domain.Money;
-import com.rschwartz.bankingapi.accounts.aplication.port.in.useCase.SendMoneyUseCase;
-import com.rschwartz.bankingapi.accounts.aplication.port.in.useCase.dto.SendMoneyInput;
+import com.rschwartz.bankingapi.accounts.application.domain.model.Money;
+import com.rschwartz.bankingapi.accounts.application.port.in.useCase.SendMoneyUseCase;
+import com.rschwartz.bankingapi.accounts.application.port.in.useCase.dto.SendMoneyInput;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -47,7 +47,6 @@ public class SendMoneyController {
     validator.validate(request)
             .isInvalidThrow(SendMoneyRequestValidatorException.class);
 
-    // TODO Validate whether it should be included in mapper
     useCase.execute(new SendMoneyInput(
         request.getSourceAccountId(),
         request.getTargetAccountId(),
