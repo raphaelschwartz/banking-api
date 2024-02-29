@@ -3,8 +3,8 @@ package com.rschwartz.bankingapi.accounts.adapter.out.persistence;
 import com.rschwartz.bankingapi.accounts.adapter.out.persistence.entity.TransactionJpaEntity;
 import com.rschwartz.bankingapi.accounts.adapter.out.persistence.mapper.TransactionMapper;
 import com.rschwartz.bankingapi.accounts.adapter.out.persistence.repository.TransactionRepository;
-import com.rschwartz.bankingapi.accounts.aplication.domain.Transaction;
-import com.rschwartz.bankingapi.accounts.aplication.port.out.RegisterTransactionPort;
+import com.rschwartz.bankingapi.accounts.application.domain.model.Transaction;
+import com.rschwartz.bankingapi.accounts.application.port.out.RegisterTransactionPort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -22,7 +22,7 @@ public class RegisterTransactionPersistenceAdapter implements RegisterTransactio
 
     log.info("Registering transaction: {}", transaction);
 
-    final TransactionJpaEntity entity = mapper.mapToJpaEntity(transaction);
+    final TransactionJpaEntity entity = mapper.mapDomainToJpaEntity(transaction);
 
     return mapper.mapJpaEntityToDomain(repository.save(entity));
   }

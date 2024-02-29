@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.rschwartz.bankingapi.BankingApiApplication;
 import com.rschwartz.bankingapi.accounts.adapter.out.persistence.LoadAccountPersistenceAdapter;
 import com.rschwartz.bankingapi.accounts.adapter.out.persistence.repository.AccountRepository;
-import com.rschwartz.bankingapi.accounts.aplication.domain.Account;
+import com.rschwartz.bankingapi.accounts.application.domain.model.Account;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

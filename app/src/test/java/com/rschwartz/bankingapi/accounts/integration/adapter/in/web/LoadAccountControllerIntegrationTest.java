@@ -11,8 +11,8 @@ import br.com.six2six.fixturefactory.loader.FixtureFactoryLoader;
 import com.rschwartz.bankingapi.accounts.adapter.in.web.LoadAccountController;
 import com.rschwartz.bankingapi.accounts.adapter.in.web.dto.response.AccountResponse;
 import com.rschwartz.bankingapi.accounts.adapter.in.web.mapper.AccountResponseMapper;
-import com.rschwartz.bankingapi.accounts.aplication.port.in.useCase.LoadAccountUseCase;
-import com.rschwartz.bankingapi.accounts.aplication.port.out.dto.AccountOutput;
+import com.rschwartz.bankingapi.accounts.application.port.in.useCase.LoadAccountUseCase;
+import com.rschwartz.bankingapi.accounts.application.port.out.dto.AccountOutput;
 import com.rschwartz.bankingapi.common.adapter.in.web.integration.GetMappingControllerTest;
 import com.rschwartz.bankingapi.common.template.BaseFixture;
 import com.rschwartz.bankingapi.common.template.output.AccountOutputTemplate;
@@ -82,15 +82,17 @@ public class LoadAccountControllerIntegrationTest extends GetMappingControllerTe
         .perform(get(uri))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$").exists())
+        .andExpect(jsonPath("id").exists())
+        .andExpect(jsonPath("id").value(output.getId()))
+        .andExpect(jsonPath("ownerId").exists())
+        .andExpect(jsonPath("ownerId").value(output.getOwnerId()))
         .andExpect(jsonPath("number").exists())
-        //.andExpect(jsonPath("accountNumber").value(output.getAccountNumber()))
+        .andExpect(jsonPath("number").value(output.getNumber()))
         .andExpect(jsonPath("balance").exists())
-        //.andExpect(jsonPath("value").value(output.getValue()))
-        .andExpect(jsonPath("limit").exists())
-        //.andExpect(jsonPath("limit").value(output.getLimit()))
+        // FIXME Add format
+        //.andExpect(jsonPath("balance").value(output.getBalance()))
         .andExpect(jsonPath("updateDate").exists())
         //.andExpect(jsonPath("updateDate").value(output.getUpdateDate()))
-    // FIXME
     ;
   }
 

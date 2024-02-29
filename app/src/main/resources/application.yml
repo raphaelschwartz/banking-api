@@ -29,3 +29,9 @@ feign:
         connectTimeout: 5000
         readTimeout: 5000
         loggerLevel: basic
+
+external:
+  users-api:
+    url: https://internal-banking/users-api
+  bacen-api:
+    url: https://bacen-developer.com.br/notifications

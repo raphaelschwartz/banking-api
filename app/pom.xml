@@ -23,6 +23,7 @@
     <fixture-factory.version>3.1.0</fixture-factory.version>
     <java-fluent-validator.version>1.10.0</java-fluent-validator.version>
     <spring-cloud.version>2023.0.0</spring-cloud.version>
+    <wiremock.version>3.4.1</wiremock.version>
   </properties>
 
   <dependencyManagement>
@@ -122,6 +123,13 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <dependency>
+      <groupId>org.wiremock</groupId>
+      <artifactId>wiremock-standalone</artifactId>
+      <version>${wiremock.version}</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>

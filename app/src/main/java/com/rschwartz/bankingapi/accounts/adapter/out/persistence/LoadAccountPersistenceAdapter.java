@@ -2,8 +2,8 @@ package com.rschwartz.bankingapi.accounts.adapter.out.persistence;
 
 import com.rschwartz.bankingapi.accounts.adapter.out.persistence.mapper.AccountMapper;
 import com.rschwartz.bankingapi.accounts.adapter.out.persistence.repository.AccountRepository;
-import com.rschwartz.bankingapi.accounts.aplication.domain.Account;
-import com.rschwartz.bankingapi.accounts.aplication.port.out.LoadAccountPort;
+import com.rschwartz.bankingapi.accounts.application.domain.model.Account;
+import com.rschwartz.bankingapi.accounts.application.port.out.LoadAccountPort;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +25,7 @@ public class LoadAccountPersistenceAdapter implements LoadAccountPort {
     // TODO Loading from caching
 
     return repository.findByIdAndActiveTrue(id)
-        .map(mapper::mapEntityToDomain);
+        .map(mapper::mapJpaEntityToDomain);
   }
 
 }

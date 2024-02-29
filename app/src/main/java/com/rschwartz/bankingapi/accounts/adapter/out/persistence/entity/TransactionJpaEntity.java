@@ -1,5 +1,6 @@
 package com.rschwartz.bankingapi.accounts.adapter.out.persistence.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -35,6 +36,7 @@ public class TransactionJpaEntity {
 
   private BigDecimal balanceAfter;
 
-  private UUID transferKey;
+  @Column(name = "transaction_key")
+  private UUID key;
 
 }

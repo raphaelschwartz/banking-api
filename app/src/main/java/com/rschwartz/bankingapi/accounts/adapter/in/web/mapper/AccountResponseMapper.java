@@ -1,7 +1,7 @@
 package com.rschwartz.bankingapi.accounts.adapter.in.web.mapper;
 
 import com.rschwartz.bankingapi.accounts.adapter.in.web.dto.response.AccountResponse;
-import com.rschwartz.bankingapi.accounts.aplication.port.out.dto.AccountOutput;
+import com.rschwartz.bankingapi.accounts.application.port.out.dto.AccountOutput;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -13,7 +13,6 @@ public class AccountResponseMapper {
         output.getOwnerId(),
         output.getNumber(),
         output.getBalance(),
-        output.getLimit(),
         output.getUpdateDate());
   }
 
