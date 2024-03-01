@@ -3,6 +3,7 @@ package com.rschwartz.bankingapi.common.adapter.in.handler;
 import br.com.fluentvalidator.exception.ValidationException;
 import com.fasterxml.jackson.core.io.JsonEOFException;
 import com.rschwartz.bankingapi.accounts.application.domain.service.exception.ThresholdExceededException;
+import com.rschwartz.bankingapi.common.adapter.out.exception.ExternalDependencyException;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -66,6 +67,17 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     final List<ApiError> errors = List.of(new ApiError("body", ex.getMessage()));
 
     return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(value = ExternalDependencyException.class)
+  private ResponseEntity<Object> unprocessableEntityRequest(final RuntimeException ex,
+      final WebRequest request) {
+
+    log.error("Handling unprocessable entity {}", ex.getMessage());
+
+    final List<ApiError> errors = List.of(new ApiError("external", ex.getMessage()));
+
+    return new ResponseEntity<>(errors, HttpStatus.UNPROCESSABLE_ENTITY);
   }
 
 }

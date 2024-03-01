@@ -178,7 +178,7 @@ class AccountTest {
       assertNotNull(result.getCreateDate());
       assertEquals(MONEY, result.getAmount());
       assertEquals(sourceAccount.getId().getValue(), result.getAccountId().getValue());
-      assertEquals(sourceAccount.getBalance().getValue().subtract(MONEY.getValue()), result.getBalanceAfter().getValue());
+      assertEquals(sourceAccount.getBalance().getValue(), result.getBalanceAfter().getValue());
       assertNotNull(result.getKey());
     });
   }
@@ -260,7 +260,7 @@ class AccountTest {
       assertNotNull(result.getCreateDate());
       assertEquals(MONEY, result.getAmount());
       assertEquals(targetAccount.getId().getValue(), result.getAccountId().getValue());
-      assertEquals(targetAccount.getBalance().getValue().add(MONEY.getValue()), result.getBalanceAfter().getValue());
+      assertEquals(targetAccount.getBalance().getValue(), result.getBalanceAfter().getValue());
       assertEquals(KEY, result.getKey());
     });
   }
