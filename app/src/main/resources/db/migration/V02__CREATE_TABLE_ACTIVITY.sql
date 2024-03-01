@@ -6,7 +6,7 @@ CREATE TABLE activity (
   amount DECIMAL(19,2) NOT NULL,
 	account_id BIGINT(20) NOT NULL,
 	balance_after DECIMAL(19,2) NOT NULL,
-	key VARCHAR(36) NOT NULL,
+	transaction_key VARCHAR(36) NOT NULL,
 	PRIMARY KEY (id),
 	UNIQUE INDEX id_UNIQUE (id),
   INDEX account_idx (account_id),
