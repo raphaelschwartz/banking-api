@@ -26,26 +26,24 @@ import org.springframework.test.context.jdbc.Sql;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
-@Sql({"/data/component/account/LoadAccount.sql"})
 public class LoadAccountControllerComponentTest extends ComponentController {
 
-  private static final String BASE_URI = "/v1/accounts";
+  private static final Long ACCOUNT_ID = 1L;
+  private static final String URL = String.format("/v1/accounts/%s", ACCOUNT_ID);
 
   @Autowired
   private TestRestTemplate restTemplate;
 
   @Test
   @DisplayName("Should get error when account does not exist.")
+  @Sql({"/data/component/account/load_account/account-not-found.sql"})
   void accountNotFound() {
-
-    final Long accountId = 99L;
-    final String uri = String.format("%s/%s", BASE_URI, accountId);
 
     final ParameterizedTypeReference<List<ApiError>> responseType = new ParameterizedTypeReference<>() {
     };
 
     final ResponseEntity<List<ApiError>> result = restTemplate.exchange(
-        uri,
+        URL,
         HttpMethod.GET,
         new HttpEntity<>(getHttpHeaders()),
         responseType
@@ -60,20 +58,18 @@ public class LoadAccountControllerComponentTest extends ComponentController {
 
   @Test
   @DisplayName("Should get account by id.")
+  @Sql({"/data/component/account/load_account/account-exists.sql"})
   void accountExists() {
 
-    final Long accountId = 123L;
-    final String uri = String.format("%s/%s", BASE_URI, accountId);
-
     final ResponseEntity<AccountResponse> result = restTemplate
-        .exchange(uri, HttpMethod.GET, new HttpEntity<>(getHttpHeaders()), AccountResponse.class);
+        .exchange(URL, HttpMethod.GET, new HttpEntity<>(getHttpHeaders()), AccountResponse.class);
 
     assertAll(() -> {
       assertEquals(result.getStatusCode(), HttpStatus.OK);
       assertNotNull(result.getBody());
 
       final AccountResponse response = result.getBody();
-      assertEquals(accountId, response.getId());
+      assertEquals(ACCOUNT_ID, response.getId());
       assertNotNull(response.getOwnerId());
       assertNotNull(response.getNumber());
       assertNotNull(response.getBalance());

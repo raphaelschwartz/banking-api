@@ -14,11 +14,11 @@ import com.rschwartz.bankingapi.accounts.application.port.out.LoadPersonPort;
 import com.rschwartz.bankingapi.accounts.application.port.out.NotificationBacenPort;
 import com.rschwartz.bankingapi.accounts.application.port.out.RegisterTransactionPort;
 import com.rschwartz.bankingapi.accounts.application.port.out.SearchTransactionsPort;
+import com.rschwartz.bankingapi.accounts.application.port.out.UpdateAccountBalancePort;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -34,15 +34,17 @@ public class SendMoneyService implements SendMoneyUseCase {
   private final SearchTransactionsPort searchTransactionsPort;
   private final RegisterTransactionPort registerTransactionPort;
   private final NotificationBacenPort notificationBacenPort;
+  private final UpdateAccountBalancePort updateAccountBalancePort;
 
   @Override
   public void execute(final SendMoneyInput input) {
 
     final Account sourceAccount = getAccount(input.getSourceAccountId());
     checkThreshold(input);
+    final Person ownerSourceAccount = getPerson(sourceAccount.getOwnerId().getValue());
 
     final Account targetAccount = getAccount(input.getTargetAccountId());
-    final Person person = getPerson(sourceAccount.getOwnerId().getValue());
+    final Person ownerTargetAccount = getPerson(targetAccount.getOwnerId().getValue());
 
     final Transaction withdraw = sourceAccount.withdraw(input.getAmount(), targetAccount.getNumber());
     final Transaction deposit = targetAccount.deposit(input.getAmount(), sourceAccount.getNumber(), withdraw.getKey());
@@ -50,12 +52,12 @@ public class SendMoneyService implements SendMoneyUseCase {
     registerTransactionPort.save(withdraw);
     registerTransactionPort.save(deposit);
 
-    sourceAccount.updateBalance();
-    targetAccount.updateBalance();
+    updateAccountBalancePort.save(sourceAccount);
+    updateAccountBalancePort.save(targetAccount);
 
-    //sendNotificationToBacen(transactions, person);
+    notificationBacenPort.send(withdraw, ownerSourceAccount);
+    notificationBacenPort.send(deposit, ownerTargetAccount);
   }
-
   private Account getAccount(final Long id) {
 
     return loadAccountPort.findById(id)
@@ -90,16 +92,6 @@ public class SendMoneyService implements SendMoneyUseCase {
 
   private Person getPerson(final Long ownerId) {
     return loadPersonPort.findById(ownerId);
-  }
-
-  private void sendNotificationToBacen(final List<Transaction> transactions, final Person person) {
-
-    final Transaction transaction = transactions.stream()
-        .filter(iten -> "TRANSFER_SENT".equals(iten.getType()))
-        .findAny()
-        .get();
-
-    notificationBacenPort.send(transaction, person);
   }
 
 }
