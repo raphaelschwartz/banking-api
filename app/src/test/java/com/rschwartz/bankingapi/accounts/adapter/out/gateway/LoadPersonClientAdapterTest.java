@@ -1,8 +1,10 @@
 package com.rschwartz.bankingapi.accounts.adapter.out.gateway;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -13,9 +15,11 @@ import com.rschwartz.bankingapi.accounts.adapter.out.gateway.client.UserClient;
 import com.rschwartz.bankingapi.accounts.adapter.out.gateway.client.dto.response.UserResponse;
 import com.rschwartz.bankingapi.accounts.adapter.out.gateway.mapper.PersonMapper;
 import com.rschwartz.bankingapi.accounts.application.domain.Person;
+import com.rschwartz.bankingapi.common.adapter.out.exception.ExternalDependencyException;
 import com.rschwartz.bankingapi.common.template.BaseFixture;
 import com.rschwartz.bankingapi.common.template.client.UserResponseTemplate;
 import com.rschwartz.bankingapi.common.template.domain.PersonTemplate;
+import feign.FeignException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,6 +42,23 @@ class LoadPersonClientAdapterTest {
   @BeforeAll
   static void setUp() {
     FixtureFactoryLoader.loadTemplates(BaseFixture.CLIENT.getPath());
+  }
+
+  @Test
+  @DisplayName("Should get error when API fails.")
+  void clientError() {
+
+    when(apiClient.findById(anyLong()))
+        .thenThrow(FeignException.class);
+
+    assertThrows(ExternalDependencyException.class,
+        () -> adapter.findById(1L));
+
+    verify(apiClient, times(1))
+        .findById(anyLong());
+
+    verify(mapper, never())
+        .mapDtoToDomain(any(UserResponse.class));
   }
 
   @Test

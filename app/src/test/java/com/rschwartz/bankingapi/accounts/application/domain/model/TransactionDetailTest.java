@@ -12,15 +12,15 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class TransactionDetailTest {
 
-  @Test
   @DisplayName("Should get error when detail is null.")
-  void detailRequiredError() {
-
-    // FIXME create a parameterized test
-    final String detail = StringUtils.EMPTY;
+  @ParameterizedTest
+  @ValueSource(strings = {StringUtils.EMPTY, " "})
+  void detailRequiredError(final String detail) {
 
     final IllegalArgumentException result = assertThrows(IllegalArgumentException.class,
         () -> new TransactionDetail(detail));

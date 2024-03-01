@@ -13,6 +13,7 @@ import static org.mockito.Mockito.when;
 import br.com.six2six.fixturefactory.Fixture;
 import br.com.six2six.fixturefactory.loader.FixtureFactoryLoader;
 import com.rschwartz.bankingapi.accounts.application.domain.Person;
+import com.rschwartz.bankingapi.accounts.application.domain.model.Account;
 import com.rschwartz.bankingapi.accounts.application.domain.model.AccountId;
 import com.rschwartz.bankingapi.accounts.application.domain.model.Transaction;
 import com.rschwartz.bankingapi.accounts.application.domain.service.exception.ThresholdExceededException;
@@ -22,6 +23,7 @@ import com.rschwartz.bankingapi.accounts.application.port.out.LoadPersonPort;
 import com.rschwartz.bankingapi.accounts.application.port.out.NotificationBacenPort;
 import com.rschwartz.bankingapi.accounts.application.port.out.RegisterTransactionPort;
 import com.rschwartz.bankingapi.accounts.application.port.out.SearchTransactionsPort;
+import com.rschwartz.bankingapi.accounts.application.port.out.UpdateAccountBalancePort;
 import com.rschwartz.bankingapi.common.template.BaseFixture;
 import com.rschwartz.bankingapi.common.template.domain.AccountTemplate;
 import com.rschwartz.bankingapi.common.template.domain.TransactionTemplate;
@@ -32,7 +34,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -59,6 +60,9 @@ class SendMoneyServiceTest {
   private RegisterTransactionPort registerTransactionPort;
   @Mock
   private NotificationBacenPort notificationBacenPort;
+
+  @Mock
+  private UpdateAccountBalancePort updateAccountBalancePort;
 
   @BeforeAll
   static void setUp() {
@@ -96,6 +100,9 @@ class SendMoneyServiceTest {
 
     verify(notificationBacenPort, never())
         .send(any(Transaction.class), any(Person.class));
+
+    verify(updateAccountBalancePort, never())
+        .save(any(Account.class));
   }
 
   @Test
@@ -137,6 +144,9 @@ class SendMoneyServiceTest {
 
     verify(notificationBacenPort, never())
         .send(any(Transaction.class), any(Person.class));
+
+    verify(updateAccountBalancePort, never())
+        .save(any(Account.class));
   }
 
   @Test
@@ -163,41 +173,6 @@ class SendMoneyServiceTest {
     verify(loadAccountPort, times(2))
         .findById(anyLong());
 
-    verify(loadPersonPort, never())
-        .findById(anyLong());
-
-    verify(registerTransactionPort, never())
-        .save(any(Transaction.class));
-
-    verify(notificationBacenPort, never())
-        .send(any(Transaction.class), any(Person.class));
-  }
-
-  @Disabled("verificar como funciona a integração no client")
-  @Test
-  @DisplayName("Should get error when person does not exist.")
-  void personNotFound() {
-
-    final SendMoneyInput input = Fixture.from(SendMoneyInput.class)
-        .gimme(SendMoneyInputTemplate.VALID);
-
-    final Long sourceAccountId = input.getSourceAccountId();
-    when(loadAccountPort.findById(sourceAccountId))
-        .thenReturn(Optional.of(AccountTemplate.getTemplateOne()));
-
-    final Long targetAccountId = input.getTargetAccountId();
-    when(loadAccountPort.findById(targetAccountId))
-        .thenReturn(Optional.of(AccountTemplate.getTemplateTwo()));
-
-    // FIXME
-    when(loadPersonPort.findById(anyLong()))
-        .thenReturn(null);
-
-    assertDoesNotThrow(() -> service.execute(input));
-
-    verify(loadAccountPort, times(2))
-        .findById(anyLong());
-
     verify(loadPersonPort, times(1))
         .findById(anyLong());
 
@@ -206,6 +181,9 @@ class SendMoneyServiceTest {
 
     verify(notificationBacenPort, never())
         .send(any(Transaction.class), any(Person.class));
+
+    verify(updateAccountBalancePort, never())
+        .save(any(Account.class));
   }
 
   @Test
@@ -228,7 +206,7 @@ class SendMoneyServiceTest {
     verify(loadAccountPort, times(2))
         .findById(anyLong());
 
-    verify(loadPersonPort, times(1))
+    verify(loadPersonPort, times(2))
         .findById(anyLong());
 
     verify(registerTransactionPort, times(2))
@@ -236,6 +214,9 @@ class SendMoneyServiceTest {
 
     verify(notificationBacenPort, never())
         .send(any(Transaction.class), any(Person.class));
+
+    verify(updateAccountBalancePort, times(2))
+        .save(any(Account.class));
   }
 
 }

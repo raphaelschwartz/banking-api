@@ -24,4 +24,17 @@ public class AccountMapper {
         AccountStatus.valueOf(entity.getStatus()));
   }
 
+  public AccountJpaEntity mapDomainToJpaEntity(final Account account) {
+
+    return new AccountJpaEntity(
+        account.getId().getValue(),
+        account.getNumber(),
+        account.getStatus().toString(),
+        account.getOwnerId().getValue(),
+        account.getBalance().getValue(),
+        account.getUpdateDate().getValue(),
+        Boolean.TRUE
+    );
+  }
+
 }

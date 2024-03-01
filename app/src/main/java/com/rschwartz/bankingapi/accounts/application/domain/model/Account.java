@@ -26,7 +26,7 @@ public class Account {
   private final AccountId id;
   private final EntityId ownerId;
   private final String number;
-  private final AccountBalance balance;
+  private AccountBalance balance;
   private final AuditDate updateDate;
   private final AccountStatus status;
 
@@ -98,11 +98,14 @@ public class Account {
 
     validateWithdraw(money, targetAccountNumber);
 
+    final AccountBalance currentBalance = this.balance.debit(money);
+    updateBalance(currentBalance);
+
     return Transaction.createDebit(
         new TransactionDetail(String.format("Trânsferência enviada para %s", targetAccountNumber)),
         money,
         this.id,
-        this.balance.debit(money)
+        currentBalance
     );
   }
 
@@ -126,6 +129,10 @@ public class Account {
 
   }
 
+  private void updateBalance(final AccountBalance balance) {
+    this.balance = balance;
+  }
+
   public Transaction deposit(
       final Money money,
       final String sourceAccountNumber,
@@ -134,11 +141,14 @@ public class Account {
 
     validateDeposit(money, sourceAccountNumber, key);
 
+    final AccountBalance currentBalance = this.balance.credit(money);
+    updateBalance(currentBalance);
+
     return Transaction.createCredit(
         new TransactionDetail(String.format("Trânsferência recebida de %s", sourceAccountNumber)),
         money,
         this.id,
-        this.balance.credit(money),
+        currentBalance,
         key
     );
   }
@@ -177,10 +187,6 @@ public class Account {
 
   private boolean isSameAccount(final String accountNumber) {
     return number.equals(accountNumber);
-  }
-
-  public void updateBalance() {
-    // TODO must send domain event
   }
 
 }
