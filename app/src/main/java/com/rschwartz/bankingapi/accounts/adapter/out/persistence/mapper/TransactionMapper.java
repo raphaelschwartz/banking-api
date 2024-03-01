@@ -10,9 +10,9 @@ import com.rschwartz.bankingapi.accounts.application.domain.model.Transaction;
 import com.rschwartz.bankingapi.accounts.application.domain.model.TransactionDetail;
 import com.rschwartz.bankingapi.accounts.application.domain.model.TransactionKey;
 import com.rschwartz.bankingapi.accounts.application.domain.model.TransactionType;
-import org.springframework.stereotype.Component;
+import com.rschwartz.bankingapi.common.annotations.Mapper;
 
-@Component
+@Mapper
 public class TransactionMapper {
 
   public TransactionJpaEntity mapDomainToJpaEntity(final Transaction transaction) {

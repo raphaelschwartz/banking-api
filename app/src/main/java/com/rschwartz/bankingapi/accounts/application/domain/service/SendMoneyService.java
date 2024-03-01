@@ -15,16 +15,16 @@ import com.rschwartz.bankingapi.accounts.application.port.out.NotificationBacenP
 import com.rschwartz.bankingapi.accounts.application.port.out.RegisterTransactionPort;
 import com.rschwartz.bankingapi.accounts.application.port.out.SearchTransactionsPort;
 import com.rschwartz.bankingapi.accounts.application.port.out.UpdateAccountBalancePort;
+import com.rschwartz.bankingapi.common.annotations.UseCase;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
-@Service
-@RequiredArgsConstructor
+@UseCase
 @Transactional
+@RequiredArgsConstructor
 public class SendMoneyService implements SendMoneyUseCase {
 
   private static final Money MAXIMUM_TRANSFER_THRESHOLD = Money.ofInteger(1_000L);

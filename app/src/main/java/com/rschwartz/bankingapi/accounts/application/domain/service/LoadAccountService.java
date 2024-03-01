@@ -4,11 +4,11 @@ import com.rschwartz.bankingapi.accounts.application.port.in.useCase.LoadAccount
 import com.rschwartz.bankingapi.accounts.application.port.out.LoadAccountPort;
 import com.rschwartz.bankingapi.accounts.application.port.out.dto.AccountOutput;
 import com.rschwartz.bankingapi.accounts.application.port.out.mapper.AccountOutputMapper;
+import com.rschwartz.bankingapi.common.annotations.UseCase;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
-@Service
+@UseCase
 @RequiredArgsConstructor
 public class LoadAccountService implements LoadAccountUseCase {
 

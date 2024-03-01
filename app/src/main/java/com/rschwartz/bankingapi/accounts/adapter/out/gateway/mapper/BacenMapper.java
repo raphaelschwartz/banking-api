@@ -3,9 +3,9 @@ package com.rschwartz.bankingapi.accounts.adapter.out.gateway.mapper;
 import com.rschwartz.bankingapi.accounts.adapter.out.gateway.client.dto.request.NotificationBacenRequest;
 import com.rschwartz.bankingapi.accounts.application.domain.Person;
 import com.rschwartz.bankingapi.accounts.application.domain.model.Transaction;
-import org.springframework.stereotype.Component;
+import com.rschwartz.bankingapi.common.annotations.Mapper;
 
-@Component
+@Mapper
 public class BacenMapper {
 
   public NotificationBacenRequest mapDomainToDTO(final Transaction transaction, final Person person) {

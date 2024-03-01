@@ -5,9 +5,9 @@ import static br.com.fluentvalidator.predicate.ObjectPredicate.nullValue;
 
 import br.com.fluentvalidator.AbstractValidator;
 import com.rschwartz.bankingapi.accounts.adapter.in.web.dto.request.SendMoneyRequest;
-import org.springframework.stereotype.Component;
+import com.rschwartz.bankingapi.common.annotations.RequestValidator;
 
-@Component
+@RequestValidator
 public class SendMoneyRequestValidator extends AbstractValidator<SendMoneyRequest> {
 
   protected static final String FIELD_SOURCE_ACCOUNT_ID = "sourceAccountId";

@@ -5,13 +5,13 @@ import com.rschwartz.bankingapi.accounts.adapter.out.persistence.mapper.Transact
 import com.rschwartz.bankingapi.accounts.adapter.out.persistence.repository.TransactionRepository;
 import com.rschwartz.bankingapi.accounts.application.domain.model.Transaction;
 import com.rschwartz.bankingapi.accounts.application.port.out.RegisterTransactionPort;
+import com.rschwartz.bankingapi.common.annotations.PersistenceAdapter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
-@Component
-@RequiredArgsConstructor
+@PersistenceAdapter
 @Slf4j
+@RequiredArgsConstructor
 public class RegisterTransactionPersistenceAdapter implements RegisterTransactionPort {
 
   private final TransactionMapper mapper;

@@ -8,9 +8,9 @@ import com.rschwartz.bankingapi.accounts.application.domain.model.AccountStatus;
 import com.rschwartz.bankingapi.accounts.application.domain.model.AuditDate;
 import com.rschwartz.bankingapi.accounts.application.domain.model.EntityId;
 import com.rschwartz.bankingapi.accounts.application.domain.model.Money;
-import org.springframework.stereotype.Component;
+import com.rschwartz.bankingapi.common.annotations.Mapper;
 
-@Component
+@Mapper
 public class AccountMapper {
 
   public Account mapJpaEntityToDomain(final AccountJpaEntity entity) {

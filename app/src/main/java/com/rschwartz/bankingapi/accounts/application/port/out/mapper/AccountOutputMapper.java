@@ -2,9 +2,9 @@ package com.rschwartz.bankingapi.accounts.application.port.out.mapper;
 
 import com.rschwartz.bankingapi.accounts.application.domain.model.Account;
 import com.rschwartz.bankingapi.accounts.application.port.out.dto.AccountOutput;
-import org.springframework.stereotype.Component;
+import com.rschwartz.bankingapi.common.annotations.Mapper;
 
-@Component
+@Mapper
 public class AccountOutputMapper {
 
   public AccountOutput mapDomainToOutput(final Account domain) {

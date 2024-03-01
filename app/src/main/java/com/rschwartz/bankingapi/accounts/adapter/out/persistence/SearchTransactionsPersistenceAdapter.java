@@ -6,15 +6,15 @@ import com.rschwartz.bankingapi.accounts.adapter.out.persistence.repository.Tran
 import com.rschwartz.bankingapi.accounts.application.domain.model.AccountId;
 import com.rschwartz.bankingapi.accounts.application.domain.model.Transaction;
 import com.rschwartz.bankingapi.accounts.application.port.out.SearchTransactionsPort;
+import com.rschwartz.bankingapi.common.annotations.PersistenceAdapter;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
-@Component
-@RequiredArgsConstructor
+@PersistenceAdapter
 @Slf4j
+@RequiredArgsConstructor
 public class SearchTransactionsPersistenceAdapter implements SearchTransactionsPort {
 
   private final TransactionRepository repository;

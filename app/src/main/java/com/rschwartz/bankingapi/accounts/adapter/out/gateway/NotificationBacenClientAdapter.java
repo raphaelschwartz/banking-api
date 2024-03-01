@@ -7,11 +7,11 @@ import com.rschwartz.bankingapi.accounts.application.domain.Person;
 import com.rschwartz.bankingapi.accounts.application.domain.model.Transaction;
 import com.rschwartz.bankingapi.accounts.application.port.out.NotificationBacenPort;
 import com.rschwartz.bankingapi.common.adapter.out.exception.ExternalDependencyException;
+import com.rschwartz.bankingapi.common.annotations.ClientAdapter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
-@Component
+@ClientAdapter
 @RequiredArgsConstructor
 @Slf4j
 public class NotificationBacenClientAdapter implements NotificationBacenPort {
