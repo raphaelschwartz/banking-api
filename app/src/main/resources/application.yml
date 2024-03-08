@@ -14,6 +14,16 @@ spring:
   jpa:
     database: MYSQL
     show-sql: true
+  cache:
+    type: redis
+    cache-null-values: true
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:password}
+      ssl:
+        enabled: true
 
 springdoc:
   api-docs:
@@ -21,7 +31,6 @@ springdoc:
   swagger-ui:
     path: /swagger.html
     operationsSorter: method
-
 feign:
   client:
     config:
@@ -35,3 +44,9 @@ external:
     url: https://internal-banking/users-api
   bacen-api:
     url: https://bacen-developer.com.br/notifications
+
+cache:
+  config:
+    entryTtl: 60
+    account:
+      entryTtl: 30

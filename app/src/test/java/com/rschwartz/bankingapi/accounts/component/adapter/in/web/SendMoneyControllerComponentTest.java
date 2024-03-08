@@ -12,6 +12,7 @@ import br.com.six2six.fixturefactory.Fixture;
 import br.com.six2six.fixturefactory.loader.FixtureFactoryLoader;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
+import com.redis.testcontainers.RedisContainer;
 import com.rschwartz.bankingapi.accounts.adapter.in.web.dto.request.SendMoneyRequest;
 import com.rschwartz.bankingapi.accounts.application.domain.model.Account;
 import com.rschwartz.bankingapi.accounts.application.port.out.LoadAccountPort;
@@ -33,6 +34,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -45,8 +47,12 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@Testcontainers(disabledWithoutDocker = true)
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 @EnableFeignClients
 @EnableConfigurationProperties
@@ -59,6 +65,17 @@ public class SendMoneyControllerComponentTest extends ComponentController {
   private static final String ERROR_EXTERNAL_CODE = "external";
   private static final String PATH_USERS = "/users";
   private static final String PATH_NOTIFICATIONS = "/notifications";
+
+  @Container
+  @ServiceConnection
+  private static final RedisContainer REDIS_CONTAINER = new RedisContainer(
+      DockerImageName.parse("redis:latest")).withExposedPorts(6379);
+
+  @Test
+  @DisplayName("Should validate that redis is running.")
+  void verifyRedisIsRunning() {
+    assertTrue(REDIS_CONTAINER.isRunning());
+  }
 
   @Autowired
   private TestRestTemplate restTemplate;

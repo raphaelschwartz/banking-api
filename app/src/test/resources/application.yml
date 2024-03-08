@@ -21,10 +21,10 @@ spring:
       schema: /sql
       settings:
         trace: false
-
   flyway:
     enabled: false
-
+  cache:
+    type: redis
 external:
   users-api:
     url: http://localhost:1030
