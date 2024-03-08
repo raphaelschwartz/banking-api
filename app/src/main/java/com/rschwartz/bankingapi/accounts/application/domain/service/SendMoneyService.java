@@ -7,8 +7,8 @@ import com.rschwartz.bankingapi.accounts.application.domain.model.Money;
 import com.rschwartz.bankingapi.accounts.application.domain.model.Transaction;
 import com.rschwartz.bankingapi.accounts.application.domain.model.TransactionType;
 import com.rschwartz.bankingapi.accounts.application.domain.service.exception.ThresholdExceededException;
+import com.rschwartz.bankingapi.accounts.application.port.in.command.SendMoneyCommand;
 import com.rschwartz.bankingapi.accounts.application.port.in.useCase.SendMoneyUseCase;
-import com.rschwartz.bankingapi.accounts.application.port.in.useCase.dto.SendMoneyInput;
 import com.rschwartz.bankingapi.accounts.application.port.out.LoadAccountPort;
 import com.rschwartz.bankingapi.accounts.application.port.out.LoadPersonPort;
 import com.rschwartz.bankingapi.accounts.application.port.out.NotificationBacenPort;
@@ -37,17 +37,17 @@ public class SendMoneyService implements SendMoneyUseCase {
   private final UpdateAccountBalancePort updateAccountBalancePort;
 
   @Override
-  public void execute(final SendMoneyInput input) {
+  public void execute(final SendMoneyCommand command) {
 
-    final Account sourceAccount = getAccount(input.getSourceAccountId());
-    checkThreshold(input);
+    final Account sourceAccount = getAccount(command.sourceAccountId());
+    checkThreshold(command);
     final Person ownerSourceAccount = getPerson(sourceAccount.getOwnerId().getValue());
 
-    final Account targetAccount = getAccount(input.getTargetAccountId());
+    final Account targetAccount = getAccount(command.targetAccountId());
     final Person ownerTargetAccount = getPerson(targetAccount.getOwnerId().getValue());
 
-    final Transaction withdraw = sourceAccount.withdraw(input.getAmount(), targetAccount.getNumber());
-    final Transaction deposit = targetAccount.deposit(input.getAmount(), sourceAccount.getNumber(), withdraw.getKey());
+    final Transaction withdraw = sourceAccount.withdraw(new Money(command.amount()), targetAccount.getNumber());
+    final Transaction deposit = targetAccount.deposit(new Money(command.amount()), sourceAccount.getNumber(), withdraw.getKey());
 
     registerTransactionPort.save(withdraw);
     registerTransactionPort.save(deposit);
@@ -64,13 +64,13 @@ public class SendMoneyService implements SendMoneyUseCase {
         .orElseThrow(() -> new EntityNotFoundException(String.format("Account %s not found.", id)));
   }
 
-  private void checkThreshold(final SendMoneyInput input) {
+  private void checkThreshold(final SendMoneyCommand command) {
 
-    final Money totalTransactionsOfDay = getTotalTransactions(input.getSourceAccountId());
+    final Money totalTransactionsOfDay = getTotalTransactions(command.sourceAccountId());
     final Money thresholdAvailable = MAXIMUM_TRANSFER_THRESHOLD.minus(totalTransactionsOfDay);
 
-    if (isDailyThresholdExceeded(input.getAmount(), thresholdAvailable)) {
-      throw new ThresholdExceededException(input.getAmount(), thresholdAvailable);
+    if (isDailyThresholdExceeded(new Money(command.amount()), thresholdAvailable)) {
+      throw new ThresholdExceededException(new Money(command.amount()), thresholdAvailable);
     }
 
   }

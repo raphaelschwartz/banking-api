@@ -15,8 +15,8 @@ import br.com.six2six.fixturefactory.loader.FixtureFactoryLoader;
 import com.rschwartz.bankingapi.accounts.adapter.in.web.dto.request.SendMoneyRequest;
 import com.rschwartz.bankingapi.accounts.adapter.in.web.exception.SendMoneyRequestValidatorException;
 import com.rschwartz.bankingapi.accounts.adapter.in.web.validator.SendMoneyRequestValidator;
+import com.rschwartz.bankingapi.accounts.application.port.in.command.SendMoneyCommand;
 import com.rschwartz.bankingapi.accounts.application.port.in.useCase.SendMoneyUseCase;
-import com.rschwartz.bankingapi.accounts.application.port.in.useCase.dto.SendMoneyInput;
 import com.rschwartz.bankingapi.common.template.BaseFixture;
 import com.rschwartz.bankingapi.common.template.fluent_validator.ErrorFluentValidatorTemplate;
 import com.rschwartz.bankingapi.common.template.request.SendMoneyRequestTemplate;
@@ -68,7 +68,7 @@ class SendMoneyControllerTest {
         .validate(any(SendMoneyRequest.class));
 
     verify(useCase, never())
-        .execute(any(SendMoneyInput.class));
+        .execute(any(SendMoneyCommand.class));
   }
 
   @Test
@@ -87,7 +87,7 @@ class SendMoneyControllerTest {
         .validate(any(SendMoneyRequest.class));
 
     verify(useCase, times(1))
-        .execute(any(SendMoneyInput.class));
+        .execute(any(SendMoneyCommand.class));
   }
 
 }

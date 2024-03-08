@@ -10,30 +10,26 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import br.com.six2six.fixturefactory.Fixture;
-import br.com.six2six.fixturefactory.loader.FixtureFactoryLoader;
 import com.rschwartz.bankingapi.accounts.application.domain.Person;
 import com.rschwartz.bankingapi.accounts.application.domain.model.Account;
 import com.rschwartz.bankingapi.accounts.application.domain.model.AccountId;
 import com.rschwartz.bankingapi.accounts.application.domain.model.Transaction;
 import com.rschwartz.bankingapi.accounts.application.domain.service.exception.ThresholdExceededException;
-import com.rschwartz.bankingapi.accounts.application.port.in.useCase.dto.SendMoneyInput;
+import com.rschwartz.bankingapi.accounts.application.port.in.command.SendMoneyCommand;
 import com.rschwartz.bankingapi.accounts.application.port.out.LoadAccountPort;
 import com.rschwartz.bankingapi.accounts.application.port.out.LoadPersonPort;
 import com.rschwartz.bankingapi.accounts.application.port.out.NotificationBacenPort;
 import com.rschwartz.bankingapi.accounts.application.port.out.RegisterTransactionPort;
 import com.rschwartz.bankingapi.accounts.application.port.out.SearchTransactionsPort;
 import com.rschwartz.bankingapi.accounts.application.port.out.UpdateAccountBalancePort;
-import com.rschwartz.bankingapi.common.template.BaseFixture;
+import com.rschwartz.bankingapi.common.template.command.SendMoneyCommandTemplate;
 import com.rschwartz.bankingapi.common.template.domain.AccountTemplate;
 import com.rschwartz.bankingapi.common.template.domain.TransactionTemplate;
-import com.rschwartz.bankingapi.common.template.input.SendMoneyInputTemplate;
 import jakarta.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -64,24 +60,18 @@ class SendMoneyServiceTest {
   @Mock
   private UpdateAccountBalancePort updateAccountBalancePort;
 
-  @BeforeAll
-  static void setUp() {
-    FixtureFactoryLoader.loadTemplates(BaseFixture.INPUT.getPath());
-  }
-
   @Test
   @DisplayName("Should get error when source account does not exist.")
   void sourceAccountNotFound() {
 
-    final SendMoneyInput input = Fixture.from(SendMoneyInput.class)
-        .gimme(SendMoneyInputTemplate.VALID);
+    final SendMoneyCommand command = SendMoneyCommandTemplate.getValid();
 
-    final Long sourceAccountId = input.getSourceAccountId();
+    final Long sourceAccountId = command.sourceAccountId();
     when(loadAccountPort.findById(sourceAccountId))
         .thenReturn(Optional.empty());
 
     final EntityNotFoundException result = assertThrows(EntityNotFoundException.class,
-        () -> service.execute(input));
+        () -> service.execute(command));
 
     final String message = String.format("Account %s not found.", sourceAccountId);
     assertEquals(message, result.getMessage());
@@ -109,10 +99,9 @@ class SendMoneyServiceTest {
   @DisplayName("Should get error when daily threshold is exceeded.")
   void dailyThresholdExceeded() {
 
-    final SendMoneyInput input = Fixture.from(SendMoneyInput.class)
-        .gimme(SendMoneyInputTemplate.VALID);
+    final SendMoneyCommand command = SendMoneyCommandTemplate.getValid();
 
-    final Long sourceAccountId = input.getSourceAccountId();
+    final Long sourceAccountId = command.sourceAccountId();
     when(loadAccountPort.findById(sourceAccountId))
         .thenReturn(Optional.of(AccountTemplate.getTemplateOne()));
 
@@ -125,7 +114,7 @@ class SendMoneyServiceTest {
         .thenReturn(transactions);
 
     final ThresholdExceededException result = assertThrows(ThresholdExceededException.class,
-        () -> service.execute(input));
+        () -> service.execute(command));
 
     final String message = "Maximum threshold for transferring money exceeded: tried to transfer 10 but threshold available is 0.";
     assertEquals(message, result.getMessage());
@@ -153,19 +142,18 @@ class SendMoneyServiceTest {
   @DisplayName("Should get error when target account does not exist.")
   void targetAccountNotFound() {
 
-    final SendMoneyInput input = Fixture.from(SendMoneyInput.class)
-        .gimme(SendMoneyInputTemplate.VALID);
+    final SendMoneyCommand command = SendMoneyCommandTemplate.getValid();
 
-    final Long sourceAccountId = input.getSourceAccountId();
+    final Long sourceAccountId = command.sourceAccountId();
     when(loadAccountPort.findById(sourceAccountId))
         .thenReturn(Optional.of(AccountTemplate.getTemplateOne()));
 
-    final Long targetAccountId = input.getTargetAccountId();
+    final Long targetAccountId = command.targetAccountId();
     when(loadAccountPort.findById(targetAccountId))
         .thenReturn(Optional.empty());
 
     final EntityNotFoundException result = assertThrows(EntityNotFoundException.class,
-        () -> service.execute(input));
+        () -> service.execute(command));
 
     final String message = String.format("Account %s not found.", targetAccountId);
     assertEquals(message, result.getMessage());
@@ -190,18 +178,17 @@ class SendMoneyServiceTest {
   @DisplayName("Should send money.")
   void sendMoney() {
 
-    final SendMoneyInput input = Fixture.from(SendMoneyInput.class)
-        .gimme(SendMoneyInputTemplate.VALID);
+    final SendMoneyCommand command = SendMoneyCommandTemplate.getValid();
 
-    final Long sourceAccountId = input.getSourceAccountId();
+    final Long sourceAccountId = command.sourceAccountId();
     when(loadAccountPort.findById(sourceAccountId))
         .thenReturn(Optional.of(AccountTemplate.getTemplateOne()));
 
-    final Long targetAccountId = input.getTargetAccountId();
+    final Long targetAccountId = command.targetAccountId();
     when(loadAccountPort.findById(targetAccountId))
         .thenReturn(Optional.of(AccountTemplate.getTemplateTwo()));
 
-    assertDoesNotThrow(() -> service.execute(input));
+    assertDoesNotThrow(() -> service.execute(command));
 
     verify(loadAccountPort, times(2))
         .findById(anyLong());

@@ -7,7 +7,6 @@ public enum BaseFixture {
 
   CLIENT("com.rschwartz.bankingapi.common.template.client"),
   ENTITY("com.rschwartz.bankingapi.common.template.entity"),
-  INPUT("com.rschwartz.bankingapi.common.template.input"),
   OUTPUT("com.rschwartz.bankingapi.common.template.output"),
   REQUEST("com.rschwartz.bankingapi.common.template.request"),
   RESPONSE("com.rschwartz.bankingapi.common.template.response"),

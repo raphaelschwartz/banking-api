@@ -1,9 +1,9 @@
 package com.rschwartz.bankingapi.accounts.application.port.in.useCase;
 
-import com.rschwartz.bankingapi.accounts.application.port.in.useCase.dto.SendMoneyInput;
+import com.rschwartz.bankingapi.accounts.application.port.in.command.SendMoneyCommand;
 
 public interface SendMoneyUseCase {
 
-  void execute(SendMoneyInput input);
+  void execute(SendMoneyCommand command);
 
 }

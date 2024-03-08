@@ -3,9 +3,8 @@ package com.rschwartz.bankingapi.accounts.adapter.in.web;
 import com.rschwartz.bankingapi.accounts.adapter.in.web.dto.request.SendMoneyRequest;
 import com.rschwartz.bankingapi.accounts.adapter.in.web.exception.SendMoneyRequestValidatorException;
 import com.rschwartz.bankingapi.accounts.adapter.in.web.validator.SendMoneyRequestValidator;
-import com.rschwartz.bankingapi.accounts.application.domain.model.Money;
+import com.rschwartz.bankingapi.accounts.application.port.in.command.SendMoneyCommand;
 import com.rschwartz.bankingapi.accounts.application.port.in.useCase.SendMoneyUseCase;
-import com.rschwartz.bankingapi.accounts.application.port.in.useCase.dto.SendMoneyInput;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -47,10 +46,10 @@ public class SendMoneyController {
     validator.validate(request)
             .isInvalidThrow(SendMoneyRequestValidatorException.class);
 
-    useCase.execute(new SendMoneyInput(
+    useCase.execute(new SendMoneyCommand(
         request.getSourceAccountId(),
         request.getTargetAccountId(),
-        new Money(new BigDecimal(request.getAmount()))
+        new BigDecimal(request.getAmount())
     ));
   }
 
